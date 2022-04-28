@@ -1,0 +1,22 @@
+html {
+  height: 100%;
+}
+html body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: url("../img/loginBack.svg");
+}
+html body .loginBox {
+  width: 100%;
+}
+html body .login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
+  width: 370px;
+  height: 400px;
+}
+/*# sourceMappingURL=login.css.map */

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <title>Index</title>
+</head>
+<body>
+    <header>
+        <div id="infoBox">
+            <div id="infoWrapper">
+                <a href="/information" class="btn btn-dark-left btn-lg" style="">信息管理</a>
+                <a href="/search" class="btn btn-dark-left btn-lg" style="">信息查询</a>
+                <a href="/admin" class="btn btn-dark-left btn-lg" style="">控制面板</a>
+            </div>
+        </div>
+        <div id="loginBox">
+            <div id="loginWrapper">
+                <a class="btn btn-dark btn-lg" href="/register" th:href="${signUrl}" th:text="${signAction}">Sign Up</a>
+                <a class="btn btn-light btn-lg" href="/login" th:href="${logUrl}" th:text="${logAction}">Log In</a>
+            </div>
+        </div>
+    </header>
+    <footer>
+        <div class="container">
+            大学生就业咨询系统
+        </div>
+    </footer>
+    <script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

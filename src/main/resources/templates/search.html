@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/md5.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <title>information</title>
+</head>
+<body>
+<header>
+    <div id="settingBox">
+        <div id="infoWrapper">
+            <a href="/" class="btn btn-dark-left btn-lg" style="">首页</a>
+            <a href="#" class="btn btn-dark-left btn-lg" style="">信息查询</a>
+            <a href="/admin" class="btn btn-dark-left btn-lg" style="">控制面板</a>
+        </div>
+    </div>
+    <div id="loginBox">
+        <div id="loginWrapper">
+            <a class="btn btn-dark btn-lg" href="/settings">设置</a>
+            <a class="btn btn-light btn-lg" href="/logout">登出</a>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-2 column">
+        </div>
+        <div class="col-md-8 column">
+            <table class="table table-striped table-hover" th:if="${user.userType == 'company'}">
+                <tr>
+                    <td>用户名</td>
+                    <td>简历</td>
+                </tr>
+                <tr th:each="resume:${resumes} ">
+                    <td th:text="${resume.uid}" th:class="|uid-${resume.uid} displayUid|"></td>
+                    <td th:text="${#strings.abbreviate(resume.resume,10)}"></td>
+                </tr>
+            </table>
+            <table class="table table-striped table-hover" th:if="${user.userType == 'student'}">
+                <tr>
+                    <td>用户名</td>
+                    <td>职位</td>
+                    <td>招聘人数</td>
+                    <td>招聘要求</td>
+                    <td>发布时间</td>
+                </tr>
+                <tr th:each="recruitment:${recruitments} ">
+                    <td th:text="${recruitment.uid}" th:class="|uid-${recruitment.uid} displayUid|"></td>
+                    <td th:text="${recruitment.position}"></td>
+                    <td th:text="${recruitment.peopleNum}"></td>
+                    <td th:text="${#strings.abbreviate(recruitment.requirement,10)}"></td>
+                    <td th:text="${recruitment.postTime}"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-2 column">
+        </div>
+    </div>
+</div>
+<script>
+    function displayUsername(uid){
+        $.getJSON("/getusernamebyuid",{uid:uid},function (data){
+            var allNodes = $("td.uid-"+uid);
+            var length = allNodes.length;
+            for(var i=0;i<length;i++){
+                allNodes[i].innerText = data["username"];
+            }
+        })
+    }
+    $(function (){
+        var allNodes = $(".displayUid");
+        var length = allNodes.length;
+        for(var i =0;i<length;i++){
+            var uid = allNodes[i].classList[0].split("-")[1];
+            displayUsername(parseInt(uid));
+        }
+    })
+</script>
+</body>
+</html>

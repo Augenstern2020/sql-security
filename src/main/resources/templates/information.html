@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/md5.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <title>information</title>
+</head>
+<body>
+<header>
+    <div id="settingBox">
+        <div id="infoWrapper">
+            <a href="/" class="btn btn-dark-left btn-lg" style="">首页</a>
+            <a href="/search" class="btn btn-dark-left btn-lg" style="">信息查询</a>
+            <a href="/admin" class="btn btn-dark-left btn-lg" style="">控制面板</a>
+        </div>
+    </div>
+    <div id="loginBox">
+        <div id="loginWrapper">
+            <a class="btn btn-dark btn-lg" href="/settings">设置</a>
+            <a class="btn btn-light btn-lg" href="/logout">登出</a>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-2 column">
+        </div>
+        <div class="col-md-8 column">
+            <div class="panel-group" id="panel-95650">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-95650" href="#panel-element-706013">管理信息</a>
+                    </div>
+                    <div id="panel-element-706013" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <table class="table" th:unless="${student}">
+                                <tr>
+                                    <td>职位</td>
+                                    <td>人数</td>
+                                    <td>要求</td>
+                                    <td>编辑</td>
+                                    <td>删除</td>
+                                </tr>
+                                <tr th:each="info:${infos}">
+                                    <td th:text="${info.position}"></td>
+                                    <td th:text="${info.peopleNum}"></td>
+                                    <td th:text="${#strings.abbreviate(info.requirement,10)}"></td>
+                                    <td>
+                                        <a id="modal-company" href="#modal-container-company" th:href="|#modal-container-company-${info.recruitId}|" role="button"  data-toggle="modal">编辑</a>
+                                        <div class="modal fade" id="modal-container-company" th:if="${info.recruitId}" th:id="|modal-container-company-${info.recruitId}|" role="dialog" th:aria-labelledby="|companyModalLabel-${info.recruitId}|"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="companyModalLabel" th:id="|companyModalLabel-${info.recruitId}|">
+                                                            修改信息
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" role="form" id="companyUpdateForm" th:id="|companyUpdateForm-${info.recruitId}|" action="/companyupdate" method="post" th:unless="${student}">
+                                                            <input type="text" hidden id="recruitId" name="recruitId" th:value="${info.recruitId}">
+                                                            <div class="form-group">
+                                                                <label for="position" class="col-sm-2 control-label">职位</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="newPosition"  name="position" th:value="${info.position}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="peopleNum" class="col-sm-2 control-label">人数</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="newPeopleNum"  name="peopleNum" th:value="${info.peopleNum}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="requirement" class="col-sm-2 control-label">职位要求</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="newRequirement"  name="requirement" form="companyUpdateForm" th:form="|companyUpdateForm-${info.recruitId}|" cols="30" rows="10" th:text="${info.requirement}"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认修改</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><a th:href="@{/deleteRecruitment(recruitId=${info.recruitId})}">删除</a></td>
+                                </tr>
+                            </table>
+                            <table class="table" th:if="${student}">
+                                <tr>
+                                    <td>简历</td>
+                                    <td>编辑</td>
+                                    <td>删除</td>
+                                </tr>
+                                <tr th:each="info:${infos}">
+                                    <td th:text="${#strings.abbreviate(info.resume,10)}"></td>
+                                    <td>
+                                        <a id="modal-stu" href="#modal-container-stu" th:href="|#modal-container-stu-${info.resumeId}|" role="button"  data-toggle="modal">编辑</a>
+                                        <div class="modal fade" id="modal-container-stu" th:id="|modal-container-stu-${info.resumeId}|" role="dialog" th:aria-labelledby="|stuModalLabel-${info.resumeId}|"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="stuModalLabel" th:id="|stuModalLabel-${info.resumeId}|">
+                                                            修改信息
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" id="studentUpdateForm" th:id="|studentUpdateForm-${info.resumeId}|" role="form" action="/studentupdate" method="post" th:if="${student}">
+                                                            <input type="text" hidden="" name="resumeId" id="resumeId" th:value="${info.resumeId}">
+                                                            <div class="form-group">
+                                                                <label for="resume" class="col-sm-2 control-label">简历</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="newResume"  name="resume" form="studentUpdateForm" th:form="|studentUpdateForm-${info.resumeId}|" cols="30" rows="10" th:text="${info.resume}"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认修改</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td><a th:href="@{/deleteResume(resumeId=${info.resumeId})}">删除</a></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-95650" href="#panel-element-36975">发布信息</a>
+                    </div>
+                    <div id="panel-element-36975" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <form class="form-horizontal detailForm" role="form" id="companyForm" action="/companypost" method="post" th:unless="${student}">
+                                <div class="form-group">
+                                    <label for="position" class="col-sm-2 control-label">职位</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="position" name="position" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="peopleNum" class="col-sm-2 control-label">人数</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="peopleNum" name="peopleNum" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="requirement" class="col-sm-2 control-label">职位要求</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" id="requirement" name="requirement" form="companyForm" cols="30" rows="10"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default">确认发布</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <form class="form-horizontal detailForm" id="studentForm" role="form" action="/studentpost" method="post" th:if="${student}">
+                                <div class="form-group">
+                                    <label for="resume" class="col-sm-2 control-label">简历</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" id="resume" name="resume" form="studentForm" cols="30" rows="10"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default">确认提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+<!--                <div class="alert alert-dismissable alert-success" th:if="${editSuccess}">-->
+<!--                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>-->
+<!--                    <h4>-->
+<!--                        恭喜你!-->
+<!--                    </h4> <strong>Congratulation!</strong> 修改成功!-->
+<!--                </div>-->
+<!--                <div class="alert alert-dismissable alert-warning" th:if="${editFail}">-->
+<!--                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>-->
+<!--                    <h4>-->
+<!--                        错误!-->
+<!--                    </h4> <strong>Oops...</strong> 修改失败!-->
+<!--                </div>-->
+            </div>
+        </div>
+        <div class="col-md-2 column">
+        </div>
+    </div>
+</div>
+<script>
+    function changeBasicInfo(){
+        var passwd = $("#newPasswd").val();
+        $("#newPasswd").val(md5(passwd));
+        return true;
+    }
+    function sleep (time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
+    $(function (){
+        var success = $("div.alert-success").length;
+        if(success){
+            sleep(5000);
+            location.href="/settings";
+        }
+    })
+</script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

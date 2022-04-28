@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/md5.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <title>Index</title>
+</head>
+<body>
+<header>
+    <div id="settingBox">
+        <div id="infoWrapper">
+            <a href="/" class="btn btn-dark-left btn-lg" style="">首页</a>
+            <a href="/information" class="btn btn-dark-left btn-lg" style="">信息管理</a>
+            <a href="/search" class="btn btn-dark-left btn-lg" style="">信息查询</a>
+        </div>
+    </div>
+    <div id="loginBox">
+        <div id="loginWrapper">
+            <a class="btn btn-dark btn-lg" href="/settings">设置</a>
+            <a class="btn btn-light btn-lg" href="/logout">登出</a>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-2 column">
+        </div>
+        <div class="col-md-8 column">
+            <div class="panel-group" id="panel-95650">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-95650" href="#panel-element-706013">基本信息</a>
+                    </div>
+                    <div id="panel-element-706013" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form" id="basicInfo" action="/edituser" method="post">
+                                <div class="form-group">
+                                    <label for="newEmail" class="col-sm-2 control-label">邮箱</label>
+                                    <div class="col-sm-10">
+                                        <input type="email" class="form-control" id="newEmail" name="newEmail"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPasswd" class="col-sm-2 control-label">密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control" id="newPasswd" name="newPasswd" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default" onclick="changeBasicInfo()">确认修改</button>
+                                    </div>
+                                </div>
+<!--                                <div class="form-group" th:style="display:${success}">-->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-95650" href="#panel-element-36975">详细信息</a>
+                    </div>
+                    <div id="panel-element-36975" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <form class="form-horizontal detailForm" role="form" action="/addstudent" method="post" th:if="${student}">
+                                <!--                                            <input type="text" name="userType" hidden value="student">-->
+                                <div class="form-group">
+                                    <label for="stuName" class="col-sm-2 control-label">姓名</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="stuName" name="stuName" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sex" class="col-sm-2 control-label">性别</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="sex" name="sex" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="age" class="col-sm-2 control-label">年龄</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="age" name="age" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="education" class="col-sm-2 control-label">学历</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="education" name="education" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="university" class="col-sm-2 control-label">毕业院校</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="university" name="university"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="major" class="col-sm-2 control-label">专业</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="major" name="major"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="graduationTime" class="col-sm-2 control-label">毕业时间</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="graduationTime" name="graduationTime"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stuPhone" class="col-sm-2 control-label">联系电话</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="stuPhone" name="stuPhone"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default">确认提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <form class="form-horizontal detailForm" id="companyForm" role="form" action="/addcompany" method="post" th:if="${company}">
+<!--                                            <input type="text" name="userType" hidden value="company">-->
+                                <div class="form-group">
+<!--                                                用户ID，企业名，企业简介，地址，联系人，联系电话，职位名称，人数，要求，发布时间等。-->
+                                    <label for="companyName" class="col-sm-2 control-label">企业名称</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="companyName" name="companyName"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="companyAddr" class="col-sm-2 control-label">企业地址</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="companyAddr" name="companyAddr"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="principal" class="col-sm-2 control-label">联系人</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="principal" name="principal"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="companyPhone" class="col-sm-2 control-label">联系电话</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="companyPhone" name="companyPhone" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="companyIntro" class="col-sm-2 control-label">公司简介</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" id="companyIntro" name="companyIntro" form="companyForm" cols="30" rows="10"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default">确认提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-dismissable alert-success" th:if="${editSuccess}">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4>
+                        恭喜你!
+                    </h4> <strong>Congratulation!</strong> 修改成功!
+                </div>
+                <div class="alert alert-dismissable alert-warning" th:if="${editFail}">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4>
+                        错误!
+                    </h4> <strong>Oops...</strong> 修改失败!
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 column">
+        </div>
+    </div>
+</div>
+<script>
+    function changeBasicInfo(){
+        var passwd = $("#newPasswd").val();
+        $("#newPasswd").val(md5(passwd));
+        return true;
+    }
+    function sleep (time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
+    $(function (){
+        var success = $("div.alert-success").length;
+        if(success){
+            sleep(5000);
+            location.href="/settings";
+        }
+    })
+</script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>
