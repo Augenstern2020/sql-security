@@ -1,0 +1,70 @@
+body {
+  height: 100%;
+  background: url("../img/loginBack.svg") no-repeat;
+  background-size: cover;
+}
+body header {
+  position: relative;
+  width: 100%;
+  height: 65px;
+}
+body #loginBox {
+  width: 200px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+}
+body #loginWrapper {
+  width: 100%;
+  height: 44px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-around;
+}
+body .btn-dark {
+  background: #47cf73;
+  color: #000000;
+  height: 100%;
+  width: 45%;
+  font-size: 16px;
+  font-weight: 700;
+}
+body .btn-light {
+  background: #444857;
+  color: #ffffff;
+  height: 100%;
+  width: 45%;
+  font-size: 16px;
+  font-weight: 700;
+}
+body .detailForm {
+  margin: 50px auto;
+}
+body #infoBox {
+  width: 250px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+}
+body #settingBox {
+  width: 500px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+}
+body #infoWrapper {
+  width: 100%;
+  height: 44px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-around;
+}
+body .btn-dark-left {
+  background: #47cf73;
+  color: #000000;
+  height: 100%;
+  width: 150px;
+  font-size: 16px;
+  font-weight: 700;
+}
+/*# sourceMappingURL=settings.css.map */

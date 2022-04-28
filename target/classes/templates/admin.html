@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/md5.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <title>admin</title>
+</head>
+<body>
+<header>
+    <div id="settingBox">
+        <div id="infoWrapper">
+            <a href="/" class="btn btn-dark-left btn-lg" style="">首页</a>
+            <a href="/search" class="btn btn-dark-left btn-lg" style="">信息查询</a>
+            <a href="/admin" class="btn btn-dark-left btn-lg" style="">控制面板</a>
+        </div>
+    </div>
+    <div id="loginBox">
+        <div id="loginWrapper">
+            <a class="btn btn-dark btn-lg" href="/settings">设置</a>
+            <a class="btn btn-light btn-lg" href="/logout">登出</a>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row clearfix">
+<!--        <div class="col-md-2 column">-->
+<!--        </div>-->
+        <div class="col-md-12 column">
+            <div class="panel-group" id="panel-95650">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-95650" href="#panel-element-706013">用户管理</a>
+                    </div>
+                    <div id="panel-element-706013" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <table class="table" >
+                                <tr>
+                                    <td>用户id</td>
+                                    <td>用户名</td>
+                                    <td>密码</td>
+                                    <td>邮箱</td>
+                                    <td>登陆次数</td>
+                                    <td>最后登陆时间</td>
+                                    <td>用户类型</td>
+                                    <td>管理员</td>
+                                    <td>编辑</td>
+                                    <td>信息录入</td>
+                                    <td>删除</td>
+                                </tr>
+                                <tr th:each="user:${users}">
+                                    <td class="uid" th:text="${user.uid}"></td>
+                                    <td th:text="${user.username}">用户名</td>
+                                    <td th:text="${user.passwd}"></td>
+                                    <td th:text="${user.email}"></td>
+                                    <td th:text="${user.loginTimes}">登陆次数</td>
+                                    <td th:text="${user.lastLoginTime}">最后登陆时间</td>
+                                    <td th:text="${user.userType == 'student'?'学生':'企业'}">用户类型</td>
+                                    <td th:if="${user.isAdmin}">是</td>
+                                    <td th:unless="${user.isAdmin}">否</td>
+                                    <td>
+                                        <a id="modal-edituser" href="#modal-container-edituser" th:href="|#modal-container-edituser-${user.uid}|" role="button"  data-toggle="modal">编辑</a>
+                                        <div class="modal fade" id="modal-container-edituser" th:if="${user.uid}" th:id="|modal-container-edituser-${user.uid}|" role="dialog" th:aria-labelledby="|edituserModalLabel-${user.uid}|"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="edituserModalLabel" th:id="|edituserModalLabel-${user.uid}|">
+                                                            修改信息
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" role="form" id="edituserUpdateForm" th:id="|edituserUpdateForm-${user.uid}|" action="/edituserinfo" method="post">
+                                                            <input type="text" hidden id="recruitId" name="recruitId" th:value="${user.uid}">
+                                                            <div class="form-group">
+                                                                <label for="newUsername" class="col-sm-2 control-label">用户名</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="newUsername"  name="username" th:value="${user.username}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="newPasswd" class="col-sm-2 control-label">密码</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="newPasswd"  name="passwd" th:value="${user.passwd}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="newEmail" class="col-sm-2 control-label">邮箱</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="newEmail"  name="email" th:value="${user.email}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="newUserType" class="col-sm-2 control-label">用户类型</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="newUserType"  name="userType" th:value="${user.userType}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="isAdmin" class="col-sm-2 control-label">管理员</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="isAdmin"  name="isAdmin"  th:value="${user.isAdmin == 1?'是':'否'}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认修改</button>
+                                                                </div>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a id="modal-editinfo-student" href="#modal-container-editinfo" th:href="|#modal-container-editinfo-${user.uid}|" role="button"  data-toggle="modal" th:onclick="|displayStudent(${user.uid})|" th:if="${user.userType=='student'}">信息录入</a>
+                                        <a id="modal-editinfo-company" href="#modal-container-editinfo" th:href="|#modal-container-editinfo-${user.uid}|" role="button"  data-toggle="modal" th:onclick="|displayCompany(${user.uid})|" th:if="${user.userType=='company'}">信息录入</a>
+                                        <div class="modal fade" id="modal-container-editinfo" th:if="${user.uid}" th:id="|modal-container-editinfo-${user.uid}|" role="dialog" th:aria-labelledby="|editinfoModalLabel-${user.uid}|"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="editinfoModalLabel" th:id="|editinfoModalLabel-${user.uid}|">
+                                                            信息录入
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" role="form" action="/adminaddstudent" method="post" th:if="${user.userType == 'student'}">
+                                                            <!--                                            <input type="text" name="userType" hidden value="student">-->
+                                                            <input type="text" id="stuUid" name="uid" th:value="${user.uid}" hidden>
+
+                                                            <div class="form-group">
+                                                                <!--                                                学生姓名，性别，年龄，学历，毕业学校，毕业时间，专业，简历，联系电话等。-->
+                                                                <label for="stuName" class="col-sm-2 control-label">姓名</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="stuName" th:id="|stuName-${user.uid}|" name="stuName" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="sex" class="col-sm-2 control-label">性别</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="sex" th:id="|sex-${user.uid}|" name="sex" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="age" class="col-sm-2 control-label">年龄</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="age" th:id="|age-${user.uid}|" name="age" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="education" class="col-sm-2 control-label">学历</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="education" th:id="|education-${user.uid}|" name="education" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="university" class="col-sm-2 control-label">毕业院校</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="university" th:id="|university-${user.uid}|" name="university"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="major" class="col-sm-2 control-label">专业</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="major" th:id="|major-${user.uid}|" name="major"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="graduationTime" class="col-sm-2 control-label">毕业时间</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="graduationTime" th:id="|graduationTime-${user.uid}|" name="graduationTime"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="stuPhone" class="col-sm-2 control-label">联系电话</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="stuPhone" th:id="|stuPhone-${user.uid}|" name="phone"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认提交</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                        <form class="form-horizontal detailForm" id="companyForm" role="form" action="/adminaddcompany" method="post" th:if="${user.userType == 'company'}">
+                                                            <!--                                            <input type="text" name="userType" hidden value="company">-->
+                                                            <input type="text" id="companyUid" name="uid" th:value="${user.uid}" hidden>
+
+                                                            <div class="form-group">
+                                                                <!--                                                用户ID，企业名，企业简介，地址，联系人，联系电话，职位名称，人数，要求，发布时间等。-->
+                                                                <label for="companyName" class="col-sm-2 control-label">企业名称</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="companyName" th:id="|companyName-${user.uid}|" name="companyName"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="address" class="col-sm-2 control-label">企业地址</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="address" th:id="|address-${user.uid}|" name="address"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="principal" class="col-sm-2 control-label">联系人</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="principal" th:id="|principal-${user.uid}|" name="principal"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="phone" class="col-sm-2 control-label">联系电话</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="phone" th:id="|phone-${user.uid}|" name="phone" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="companyIntro" class="col-sm-2 control-label">公司简介</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="companyIntro" name="companyIntro" th:id="|companyIntro-${user.uid}|" form="companyForm" cols="30" rows="10"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认提交</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><a th:href="@{/deleteuser(uid=${user.uid})}">删除</a></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <a id="modal-adduser" href="#modal-container-adduser"  role="button"  data-toggle="modal">添加用户</a>
+                                        <div class="modal fade" id="modal-container-adduser"  role="dialog" aria-labelledby="adduserModalLabel"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="adduserModalLabel">
+                                                            用户信息
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" role="form" id="adduserForm"  action="/adduser" method="post">
+                                                            <div class="form-group">
+                                                                <label for="username" class="col-sm-2 control-label">用户名</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="username"  name="username"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="passwd" class="col-sm-2 control-label">密码</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="passwd"  name="passwd" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="email" class="col-sm-2 control-label">邮箱</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="email"  name="email" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="userType" class="col-sm-2 control-label">用户类型</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="userType"  name="userType"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="isAdmin" class="col-sm-2 control-label">管理员</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="Admin"  name="isAdmin" placeholder="管理员请输入1,普通用户请输入0"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default" onclick="hash()">确认提交</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-95650" href="#panel-element-36975">简历信息管理</a>
+                    </div>
+                    <div id="panel-element-36975" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <table class="table table-striped table-hover">
+                                <tr>
+                                    <td>用户名</td>
+                                    <td>简历</td>
+                                    <td>编辑</td>
+                                    <td>删除</td>
+                                </tr>
+                                <tr th:each="resume:${resumes} ">
+                                    <td th:text="${resume.uid}" th:class="|uid-${resume.uid} displayUid|"></td>
+                                    <td th:text="${#strings.abbreviate(resume.resume,10)}"></td>
+                                    <td>
+                                        <a id="modal-stu" href="#modal-container-stu" th:href="|#modal-container-job-${resume.resumeId}|" role="button"  data-toggle="modal">编辑</a>
+                                        <div class="modal fade" id="modal-container-stu" th:id="|modal-container-job-${resume.resumeId}|" role="dialog" th:aria-labelledby="|jobModalLabel-${resume.resumeId}|"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="stuModalLabel" th:id="|jobModalLabel-${resume.resumeId}|">
+                                                            修改信息
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" id="studentUpdateForm" th:id="|studentUpdateForm-${resume.resumeId}|" role="form" action="/adminupdatestudent" method="post">
+                                                            <input type="text" hidden="" name="resumeId" id="resumeId" th:value="${resume.resumeId}">
+                                                            <div class="form-group">
+                                                                <label for="newResume" class="col-sm-2 control-label">简历</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="newResume"  name="resume" form="studentUpdateForm" th:form="|studentUpdateForm-${resume.resumeId}|" cols="30" rows="10" th:text="${resume.resume}"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认修改</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><a th:href="@{/deleteresume(resumeId=${resume.resumeId})}">删除</a></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <a id="modal-addresume" href="#modal-container-addresume"  role="button"  data-toggle="modal">添加简历</a>
+                                        <div class="modal fade" id="modal-container-addresume"  role="dialog" aria-labelledby="addresumeModalLabel"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="addresumeModalLabel">
+                                                            求职信息
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" role="form" id="addresumeForm"  action="/addresume" method="post">
+                                                            <div class="form-group">
+                                                                <label for="resumeUsername" class="col-sm-2 control-label">用户名</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="resumeUsername"  name="username"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="personResume" class="col-sm-2 control-label">个人简历</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="personResume" name="resume" form="addresumeForm" cols="30" rows="10"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认提交</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-95650" href="#panel-element-36976">招聘信息管理</a>
+                    </div>
+                    <div id="panel-element-36976" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <table class="table">
+                                <tr>
+                                    <td>用户名</td>
+                                    <td>职位</td>
+                                    <td>招聘人数</td>
+                                    <td>招聘要求</td>
+                                    <td>发布时间</td>
+                                    <td>编辑</td>
+                                    <td>删除</td>
+                                </tr>
+                                <tr th:each="recruitment:${recruitments} ">
+                                    <td th:text="${recruitment.uid}" th:class="|uid-${recruitment.uid} displayUid|"></td>
+                                    <td th:text="${recruitment.position}"></td>
+                                    <td th:text="${recruitment.peopleNum}"></td>
+                                    <td th:text="${#strings.abbreviate(recruitment.requirement,10)}"></td>
+                                    <td th:text="${recruitment.postTime}"></td>
+                                    <td>
+                                        <a id="modal-recruit" href="#modal-container-company" th:href="|#modal-container-recruit-${recruitment.recruitId}|" role="button"  data-toggle="modal">编辑</a>
+                                        <div class="modal fade" id="modal-container-company" th:if="${recruitment.recruitId}" th:id="|modal-container-recruit-${recruitment.recruitId}|" role="dialog" th:aria-labelledby="|recruitModalLabel-${recruitment.recruitId}|"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="companyModalLabel" th:id="|recruitModalLabel-${recruitment.recruitId}|">
+                                                            修改信息
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" role="form" id="companyUpdateForm" th:id="|companyUpdateForm-${recruitment.recruitId}|" action="/adminupdatecompany" method="post">
+                                                            <input type="text" hidden name="recruitId" th:value="${recruitment.recruitId}">
+                                                            <div class="form-group">
+                                                                <label for="newPosition" class="col-sm-2 control-label">职位</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="newPosition"  name="position" th:value="${recruitment.position}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="newPeopleNum" class="col-sm-2 control-label">人数</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="newPeopleNum"  name="peopleNum" th:value="${recruitment.peopleNum}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="newRequirement" class="col-sm-2 control-label">职位要求</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="newRequirement"  name="requirement" form="companyUpdateForm" th:form="|companyUpdateForm-${recruitment.recruitId}|" cols="30" rows="10" th:text="${recruitment.requirement}"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认修改</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td><a th:href="@{/deleterecruitment(recruitId=${recruitment.recruitId})}">删除</a></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <a id="modal-addrecruit" href="#modal-container-addrecruit"  role="button"  data-toggle="modal">添加招聘信息</a>
+                                        <div class="modal fade" id="modal-container-addrecruit"  role="dialog" aria-labelledby="addrecruitModalLabel"  aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title" id="addrecruitModalLabel">
+                                                            招聘信息
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="form-horizontal detailForm" role="form" id="addrecruitForm"  action="/addrecruitment" method="post">
+                                                            <div class="form-group">
+                                                                <label for="recruitUsername" class="col-sm-2 control-label">用户名</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="recruitUsername"  name="username"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="recruitPosition" class="col-sm-2 control-label">职位</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="recruitPosition"  name="position"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="recruitPeopleNum" class="col-sm-2 control-label">人数</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="recruitPeopleNum"  name="peopleNum"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="recruitRequirement" class="col-sm-2 control-label">要求</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="recruitRequirement" name="requirement" form="addrecruitForm" cols="30" rows="10"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-2 col-sm-10">
+                                                                    <button type="submit" class="btn btn-default">确认提交</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> <button type="button" class="btn btn-primary">保存</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--                <div class="alert alert-dismissable alert-success" th:if="${editSuccess}">-->
+                <!--                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>-->
+                <!--                    <h4>-->
+                <!--                        恭喜你!-->
+                <!--                    </h4> <strong>Congratulation!</strong> 修改成功!-->
+                <!--                </div>-->
+                <!--                <div class="alert alert-dismissable alert-warning" th:if="${editFail}">-->
+                <!--                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>-->
+                <!--                    <h4>-->
+                <!--                        错误!-->
+                <!--                    </h4> <strong>Oops...</strong> 修改失败!-->
+                <!--                </div>-->
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<script>
+    function hash(){
+        var passwd = $("#passwd").val();
+        if(passwd){
+            $("#passwd").val(md5(passwd));
+        }
+    };
+
+    function sleep (time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
+    $(function (){
+        var success = $("div.alert-success").length;
+        if(success){
+            sleep(5000);
+            location.href="/settings";
+        }
+    })
+    function displayStudent(myuid){
+        $.getJSON("/getstudentinfo",{uid:myuid},function (data){        //data是student类
+            for(let i in data){
+                try{
+                    if(i==="phone"){
+                        $("#stuPhone"+"-"+myuid).val(data[i]);
+
+                    }else {
+                        $("#"+i+"-"+myuid).val(data[i]);
+
+                    }
+                }catch (err){
+                    console.log("nothing");
+                }
+            }
+        })
+    }
+    function displayCompany(myuid){
+        $.getJSON("/getcompanyinfo",{uid:myuid},function (data){
+            for(let i in data){
+                try{
+                    $("#"+i+"-"+myuid).val(data[i]);    //id赋值操作
+                }catch (err){
+                    console.log("nothing");
+                }
+            }
+        })
+    }
+    function displayUsername(uid){
+        $.getJSON("/getuserbyuid",{uid:uid},function (data){
+            var allNodes = $("td.uid-"+uid);
+            var length = allNodes.length;
+            for(var i=0;i<length;i++){
+                allNodes[i].innerText = data["username"];
+            }
+        })
+    }
+    $(function (){
+        var allNodes = $(".displayUid");
+        var length = allNodes.length;
+        for(var i =0;i<length;i++){
+           var uid = allNodes[i].classList[0].split("-")[1];
+           displayUsername(parseInt(uid));
+        }
+
+    })
+</script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>
